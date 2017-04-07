@@ -10,10 +10,68 @@
 </head>
 <body ng-app="baeting">
   <div ng-controller="HomeCtrl">
+    <h4>Innskráning</h4>
     <input ng-model="username" placeholder="Netfang"/>
     <input ng-model="password" placeholder="Lykilorð" type="password" />
     <button ng-click="login()">Innskrá</button>
-    <span ng-bind="loginMessage"></span>
+    <span ng-bind="loginMessage"></span>    
+  </div>
+
+  <hr style="clear:both" />
+
+  <div ng-controller="CandyCtrl">
+    <div style="width:30%; float: left">
+      <h4>Skrá tegund af nammi</h4>
+      <input ng-model="name" placeholder="Nafn" />
+      <input ng-model="price" placeholder="Verð" />
+      <button ng-click="insert()">Skrá</button>
+      <span ng-bind="message"></span>
+    </div>
+    <div style="width:70%">
+      <h4>Nammitegundir</h4>
+      <ul>
+        <li ng-repeat="candy in candyList">{{ candy.name }} - {{ candy.price }} kr.</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr style="clear:both" />
+  
+  <div ng-controller="BuyCtrl">    
+    <div style="width:30%; float: left">
+      <h4>Skrá innkaup</h4>
+      <select ng-model="selectedCandy" ng-options="candy as candy.name for candy in candyList track by candy.$id">
+        <option>Nammi</option>
+      </select>
+      <input ng-model="count" placeholder="count" />
+      <button ng-click="insert()">Skrá</button>
+      <span ng-bind="message"></span>
+    </div>
+    <div style="width:70%">
+      <h4>Innkaup</h4>
+      <ul>
+        <li ng-repeat="buy in buyList">{{ buy.date | date : 'dd.MM.yyyy' }} {{ buy.candy }} ({{ buy.count}} stk)</li>
+      </ul>
+    </div>
+  </div>
+  
+  <hr style="clear:both" />
+
+   <div ng-controller="SellCtrl">    
+    <div style="width:30%; float: left">
+      <h4>Sölur</h4>
+      <div ng-repeat="candy in candyList">
+        {{ candy.name }} <button ng-click="sell(candy.$id)">Selja</button>
+      </div>      
+      
+      <span ng-bind="message"></span>
+    </div>
+    <div style="width:70%">
+      <h4>Sölur</h4>
+      <ul>
+        <li ng-repeat="sell in sellList">{{ sell.date | date : 'dd.MM.yyyy' }} {{ buy.candy.name }} ({{ buy.count}} stk)</li>
+      </ul>
+    </div>
   </div>
 
 </body>
