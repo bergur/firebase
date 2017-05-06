@@ -14,7 +14,7 @@
     <input ng-model="username" placeholder="Netfang"/>
     <input ng-model="password" placeholder="Lykilorð" type="password" />
     <button ng-click="login()">Innskrá</button>
-    <span ng-bind="loginMessage"></span>    
+    <span ng-bind="loginMessage"></span>
   </div>
 
   <hr style="clear:both" />
@@ -36,8 +36,8 @@
   </div>
 
   <hr style="clear:both" />
-  
-  <div ng-controller="BuyCtrl">    
+
+  <div ng-controller="BuyCtrl">
     <div style="width:30%; float: left">
       <h4>Skrá innkaup</h4>
       <select ng-model="selectedCandy" ng-options="candy as candy.name for candy in candyList track by candy.$id">
@@ -50,26 +50,26 @@
     <div style="width:70%">
       <h4>Innkaup</h4>
       <ul>
-        <li ng-repeat="buy in buyList">{{ buy.date | date : 'dd.MM.yyyy' }} {{ buy.candy }} ({{ buy.count}} stk)</li>
+        <li ng-repeat="buy in buyList">{{ buy.date | date : 'dd.MM.yyyy' }} {{ buy.candy.name }} ({{ buy.count}} stk)</li>
       </ul>
     </div>
   </div>
-  
+
   <hr style="clear:both" />
 
-   <div ng-controller="SellCtrl">    
+   <div ng-controller="SellCtrl">
     <div style="width:30%; float: left">
       <h4>Sölur</h4>
       <div ng-repeat="candy in candyList">
         {{ candy.name }} <button ng-click="sell(candy.$id)">Selja</button>
-      </div>      
-      
+      </div>
+
       <span ng-bind="message"></span>
     </div>
     <div style="width:70%">
       <h4>Sölur</h4>
       <ul>
-        <li ng-repeat="sell in sellList">{{ sell.date | date : 'dd.MM.yyyy' }} {{ buy.candy.name }} ({{ buy.count}} stk)</li>
+        <li ng-repeat="sell in sellList">{{ sell.date | date : 'dd.MM.yyyy hh:mm' }} {{ sell.candy.name }}</li>
       </ul>
     </div>
   </div>

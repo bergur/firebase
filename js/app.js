@@ -16,27 +16,29 @@ app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
   return $firebaseAuth();
 }]);
 
-app.factory('Candy', ['$firebaseArray','$firebaseObject', function($firebaseArray, $firebaseObject){
+app.factory('Candy', ['$firebaseArray', function($firebaseArray){
   const ref = firebase.database().ref('candy');
   return $firebaseArray(ref);
 }])
 
-app.factory('Buy', ['$firebaseArray', function($firebaseArray){
-  const ref = firebase.database().ref('buy');  
-  
-  const buy = $firebaseArray.$extend({
+app.factory('Buy', ['$firebaseArray', '$firebaseObject', function($firebaseArray, $firebaseObject){
+  const ref = firebase.database().ref('buy');
+  const candy = firebase.database().ref('candy');
+
+  const list = $firebaseArray.$extend({
     $$added: function(snap) {
-      console.log(snap.val()); 
-      return snap.val();
-    }    
+      const record = $firebaseArray.prototype.$$added.call(this, snap);
+      record.candy = $firebaseObject(candy.child(record.candyId));
+      return record;
+    }
   });
 
-  return buy(ref);
+  return new list(ref);
   //return $firebaseArray(ref);
 }])
 
 app.factory('Sell', ['$firebaseArray', function($firebaseArray){
-  const ref = firebase.database().ref('sell');  
+  const ref = firebase.database().ref('sell');
   return $firebaseArray(ref);
 }])
 
@@ -49,48 +51,48 @@ app.controller('HomeCtrl', ['$scope', 'Auth', function($scope, Auth) {
       if (error.code === 'auth/wrong-password') {
         $scope.loginMessage = 'Vitlaust netfang eða lykilorð';
       }
-      console.log(error);
     });
   }
 }]);
 
 app.controller('CandyCtrl', ['$scope', 'Candy', function($scope, Candy) {
   $scope.candyList = Candy;
-  
+
   $scope.insert = function() {
     $scope.candyList.$add({
       name: $scope.name,
       price: $scope.price
-    })  
+    })
   }
 }]);
 
-app.controller('BuyCtrl', ['$scope', 'Buy','Candy', function($scope, Buy, Candy) {   
-  $scope.buyList = Buy;  
+app.controller('BuyCtrl', ['$scope', 'Buy','Candy', function($scope, Buy, Candy) {
+  $scope.buyList = Buy;
   $scope.candyList = Candy;
   $scope.selectedCandy = null;
 
-  $scope.getCandy = function(key) {
-    const ref = firebase.database().ref('candy');
-    return 'test';
-  }
-  
   $scope.insert = function() {
     console.log($scope.selectedCandy);
     $scope.buyList.$add({
       count: $scope.count,
-      candy: $scope.selectedCandy.$id,
+      candyId: $scope.selectedCandy.$id,
       date: new Date().getTime()
-    })  
+    })
   }
 }]);
 
-app.controller('SellCtrl', ['$scope', 'Sell','Candy', function($scope, Sell, Candy) {   
-  $scope.sellList = Sell;  
-  $scope.candyList = Candy;
-  $scope.selectedCandy = null;
+app.controller('SellCtrl', ['$scope', 'Sell', 'Candy', 'Auth', function($scope, Sell, Candy, Auth) {
+  $scope.sellList = Sell;
+  $scope.candyList = Candy
+
+ // Todo : Skrifa út nafnið á vörunni sem var seld
+ // Halda utan um inventory
 
   $scope.sell = function(id) {
-    console.log(id);
+    $scope.sellList.$add({
+      candyId: id,
+      user: Auth.$getAuth().uid,
+      date: new Date().getTime()
+    })
   }
 }]);
